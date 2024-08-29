@@ -1,0 +1,5 @@
+rootProject.name = 'phoneFinderApp'
+include 'springBack'
+include 'Gui'
+include 'back'
+
