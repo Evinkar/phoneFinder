@@ -6,7 +6,8 @@ import ru.lukyanov.service.ParseJsonService;
 import ru.lukyanov.service.ResponseClientService;
 
 import javax.swing.*;
-import java.awt.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class NumberSearchFrame extends JFrame {
             numberHashMap.put(phoneNumber.getNumber(),phoneNumber);
         }); //получам лист number и кладем в hashmap с ключом number
 
-        JList<PhoneNumber> list = new JList<>(findNumber(countryIndex).toArray(new PhoneNumber[0]));//добавляем в лист массив обьекта country c методом to string
+        JList<Long> list = new JList<>(numberHashMap.keySet().stream().toList().toArray(new Long[0]));//добавляем в лист массив обьекта country c методом to string
         JScrollPane scrollPane = new JScrollPane(list);//оборачиваем лист в scrollPane
         //scrollPane.setBounds(10, 20, 280, 300);
 
@@ -44,10 +45,9 @@ public class NumberSearchFrame extends JFrame {
         Box mainBox = Box.createVerticalBox();
         mainBox.add(backToCountryButton);
         mainBox.add(scrollPane);
-        add(mainBox);
-        pack();
+        setContentPane(mainBox);
+        pack();//узнать что это такое
 
-        backToCountryButton.setBounds(350, 350,10, 50);
         backToCountryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -57,6 +57,7 @@ public class NumberSearchFrame extends JFrame {
             }
         });
         add(backToCountryButton);
+        numberSelection(list);
 
 
         setVisible(true);
@@ -73,6 +74,30 @@ public class NumberSearchFrame extends JFrame {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+    public void numberSelection(JList<Long> list) {
+
+        JFrame owner  = this;
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //тип выбора
+        list.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting()) {
+                    return; // Игнорирует начало выбора
+                }
+                String selectedValue = String.valueOf(list.getSelectedValue());
+
+
+                System.out.println(numberHashMap.get(Long.parseLong(selectedValue)));
+                openNumberCardFrame(numberHashMap.get(Long.parseLong(selectedValue)), (NumberSearchFrame) owner);
+                // Действие при выделении элемента
+
+            }
+        });
+    }
+    public  void openNumberCardFrame(PhoneNumber phoneNumber, NumberSearchFrame previousFrame){
+        new NumberCardFrame(phoneNumber, previousFrame);
+        this.setVisible(false);
     }
 
 }
