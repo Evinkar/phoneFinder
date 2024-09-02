@@ -23,7 +23,8 @@ public class ParseJsonService {
 
 
     }
-    public ArrayList<PhoneNumber> jsonParseToArrayNumber(String response) throws JsonProcessingException{
+
+    public ArrayList<PhoneNumber> jsonParseToArrayNumber(String response) throws JsonProcessingException {
 
         return objectMapper.readValue(response, ResponseNumber.class).getNumbers();
     }

@@ -3,22 +3,27 @@ package ru.front.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.lukyanov.model.CountryDTO;
 import ru.lukyanov.model.PhoneNumberDTO;
 import java.util.List;
 
 public class JsonClientService {
     static ObjectMapper objectMapper = new ObjectMapper();
+    private static final Logger logger = LoggerFactory.getLogger(JsonClientService.class);
 
     public static List<CountryDTO> jsonParseToArrayCountry(String response) throws JsonProcessingException {
-
-        return objectMapper.readValue(response, new TypeReference<>() {});
+        List<CountryDTO> countryDTOList = objectMapper.readValue(response, new TypeReference<>() {});
+        logger.info("Сформирован лист из {} стран", countryDTOList.size());
+        return countryDTOList;
 
 
     }
     public static List<PhoneNumberDTO> jsonParseToArrayNumber(String response) throws JsonProcessingException{
-
-        return objectMapper.readValue(response, new TypeReference<>() {});
+        List<PhoneNumberDTO> phoneNumberDTOList = objectMapper.readValue(response, new TypeReference<>() {});
+        logger.info("Сформирован лист из {} номеров", phoneNumberDTOList.size());
+        return phoneNumberDTOList;
     }
     public static String objectToJson (Object o) throws JsonProcessingException {
         return objectMapper.writeValueAsString(o);

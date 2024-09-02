@@ -1,6 +1,9 @@
 package ru.front.frame;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.front.component.BackButton;
 import ru.front.frame.message.PhoneNumberMessages;
 import ru.front.service.JsonClientService;
 import ru.front.service.RestClientService;
@@ -14,6 +17,7 @@ import java.util.List;
 public class NumberCardFrame extends JFrame {
     private RestClientService restClientService = new RestClientService();
     private PhoneNumberDTO phoneNumber;
+    private static final Logger logger = LoggerFactory.getLogger(NumberCardFrame.class);
 
     private final List<String> displayedFields = Arrays.asList(
             "number",
@@ -27,8 +31,9 @@ public class NumberCardFrame extends JFrame {
 
         this.phoneNumber = phoneNumber;
         setTitle("Number Card");
-        setSize(600, 300);
+        setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
         List<String> attributeNames = Arrays.stream(phoneNumber.getClass().getDeclaredFields())
                 .map(Field::getName).toList();//Собирает в лист названия полей
@@ -47,29 +52,23 @@ public class NumberCardFrame extends JFrame {
             }
         }
 
-        JButton savePhoneButton = new JButton("Save");
+        JButton savePhoneButton = new JButton("Сохранить");
         savePhoneButton.addActionListener(e -> {
             try {
                 restClientService.postRequest("http://localhost:8080/api/saveNumber",
                         JsonClientService.objectToJson(phoneNumber));
+                logger.info("");
             } catch (JsonProcessingException ex) {
                 throw new RuntimeException(ex);
             }
         });
         add(savePhoneButton);
 
+        BackButton backToNumberButton = new BackButton(this,previousFrame,"назад",null);
 
-        JButton backToCountryButton = new JButton("Back");
-        backToCountryButton.addActionListener(e -> {
-            previousFrame.setVisible(true);
-            dispose();
-
-        });
-        add(backToCountryButton);
-
-        contentPane.add(backToCountryButton);
+        contentPane.add(backToNumberButton);
         pack();
-        setLocationRelativeTo(null);
+
         setVisible(true);
     }
 

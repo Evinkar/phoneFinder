@@ -1,6 +1,5 @@
 package ru.lukyanov.model;
 
-
 import java.util.ArrayList;
 
 public class ResponseNumber {

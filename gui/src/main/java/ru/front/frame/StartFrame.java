@@ -1,10 +1,17 @@
 package ru.front.frame;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import ru.front.service.JsonClientService;
+import ru.front.service.RestClientService;
+import ru.lukyanov.model.PhoneNumberDTO;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class StartFrame extends JFrame {
+    RestClientService restClientService = new RestClientService();
     public StartFrame(){
         setTitle("Поиск стран");
         setSize(300, 200);
@@ -16,7 +23,7 @@ public class StartFrame extends JFrame {
         layout.setAutoCreateGaps(true);
 
 
-        JButton countrySearchButton = new JButton("Country Search");
+        JButton countrySearchButton = new JButton("Поиск по странам");
         countrySearchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -24,6 +31,16 @@ public class StartFrame extends JFrame {
             }
         });
         JButton phoneBook = new JButton("Телефонная книга");
+        phoneBook.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    openPhoneBookFrame();
+                } catch (JsonProcessingException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                         .addComponent(countrySearchButton)
@@ -39,11 +56,18 @@ public class StartFrame extends JFrame {
         );
         setLocationRelativeTo(null);
         add(panel);
-        setVisible(true);
+        this.setVisible(true);
     }
     private void openCountrySearchFrame(){
-        new CountrySearchFrame();
-        this.dispose();
+        new CountrySearchFrame(this);
+        this.setVisible(false);
+    }
+    private void openPhoneBookFrame() throws JsonProcessingException {
+        List<PhoneNumberDTO> phoneNumberDTOList;
+        phoneNumberDTOList = JsonClientService.jsonParseToArrayNumber(restClientService
+                .getResponseBody("http://localhost:8080/api/loadNumberList"));
+        new NumberSearchFrame(phoneNumberDTOList,this);//список обьектов
+        this.setVisible(false);
     }
 
 }

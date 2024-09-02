@@ -1,6 +1,8 @@
 package ru.lukyanov.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.lukyanov.model.Country;
@@ -18,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class GeneralController {
+    private static final Logger logger = LoggerFactory.getLogger(GeneralController.class);
     @Autowired
     ResponseClientService responseClientService;
     @Autowired
@@ -26,7 +29,7 @@ public class GeneralController {
     NumberRepository numberRepository;
 
     @GetMapping("/getCountryList")
-    public List<CountryDTO> getCountryResponse(){
+    public List<CountryDTO> getCountryResponse() {
 
         String responseBody = (responseClientService.getResponseBody("https://onlinesim.ru/api/getFreeCountryList"));
         ArrayList<Country> countries;
@@ -34,6 +37,7 @@ public class GeneralController {
         try {
             countries = parseJsonService.jsonParseToArrayCountry(responseBody);
         } catch (JsonProcessingException e) {
+            logger.error("Ошибка при парсинге",e);
             throw new RuntimeException(e);
         }
         return countries.stream().map(country -> country.toDTO()).toList();
@@ -41,9 +45,9 @@ public class GeneralController {
     }
 
     @GetMapping("/getNumberList")
-    public List<PhoneNumberDTO> getNumberResponse(@RequestParam Long countryIndex){
+    public List<PhoneNumberDTO> getNumberResponse(@RequestParam Long countryIndex) {
         String responseBody = (responseClientService.
-                getResponseBody("https://onlinesim.ru/api/getFreePhoneList?country="+countryIndex));
+                getResponseBody("https://onlinesim.ru/api/getFreePhoneList?country=" + countryIndex));
         ArrayList<PhoneNumber> numbers;
 
         try {
@@ -51,12 +55,20 @@ public class GeneralController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return numbers.stream().map(phoneNumber -> phoneNumber.toDTO()).toList();
+        return numbers.stream().map(PhoneNumber::toDTO).toList();
     }
-    @PostMapping("/saveNumber")
-    public PhoneNumberDTO saveNumber(@RequestBody PhoneNumberDTO phoneNumberDTO){
-        return numberRepository.save(PhoneNumber.fromDTO(phoneNumberDTO)).toDTO();
 
+    @PostMapping("/saveNumber")
+    public PhoneNumberDTO saveNumber(@RequestBody PhoneNumberDTO phoneNumberDTO) {
+        PhoneNumberDTO savedNumber = numberRepository.save(PhoneNumber.fromDTO(phoneNumberDTO)).toDTO();
+        logger.info("Обьект сохранен {}",savedNumber.getFullNumber());
+        return savedNumber;
+
+    }
+
+    @GetMapping("/loadNumberList")
+    public List<PhoneNumberDTO> loadAllSavedNumbers() {
+        return numberRepository.findAll().stream().map(PhoneNumber::toDTO).toList();
     }
 
 
