@@ -24,8 +24,17 @@ public class Country {
 
     public Country() {
     }
+
+    public CountryDTO toDTO() {
+        return new CountryDTO(this.getCountry(), this.getCountryName());
+    }
+
+    public static Country fromDTO(CountryDTO countryDTO) {
+        return new Country(countryDTO.getCountry(), countryDTO.getCountryName());
+    }
+    //soliD инверсия зависимости, что бы реализация зависела от абстракции
     @Override
-    public String toString(){
+    public String toString() {
         return ("number: " + country + " country name: " + countryName);
     }
 

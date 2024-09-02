@@ -110,4 +110,29 @@ public class PhoneNumber {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public PhoneNumberDTO toDTO() {
+        PhoneNumberDTO phoneNumberDTO = new PhoneNumberDTO();
+        phoneNumberDTO.setNumber(this.getNumber());
+        phoneNumberDTO.setFullNumber(this.getFullNumber());
+        phoneNumberDTO.setCountryIndex(this.getCountryIndex());
+        phoneNumberDTO.setCountryText(this.getCountryText());
+        phoneNumberDTO.setStatus(this.getStatus());
+        phoneNumberDTO.setDataHumans(this.getDataHumans());
+        phoneNumberDTO.setMaxDate(this.getMaxDate());
+        phoneNumberDTO.setUpdatedAt(this.getUpdatedAt());
+        return phoneNumberDTO;
+    }
+    public static PhoneNumber fromDTO(PhoneNumberDTO phoneNumberDTO){
+        PhoneNumber phoneNumber = new PhoneNumber();
+        phoneNumber.setNumber(phoneNumberDTO.getNumber());
+        phoneNumber.setFullNumber(phoneNumberDTO.getFullNumber());
+        phoneNumber.setCountryIndex(phoneNumberDTO.getCountryIndex());
+        phoneNumber.setCountryText(phoneNumberDTO.getCountryText());
+        phoneNumber.setStatus(phoneNumberDTO.getStatus());
+        phoneNumber.setDataHumans(phoneNumberDTO.getDataHumans());
+        phoneNumber.setMaxDate(phoneNumberDTO.getMaxDate());
+        phoneNumber.setUpdatedAt(phoneNumberDTO.getUpdatedAt());
+        return phoneNumber;
+    }
 }
