@@ -1,6 +1,8 @@
 package ru.front.frame;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.front.component.BackButton;
 import ru.front.service.JsonClientService;
 import ru.front.service.RestClientService;
@@ -10,28 +12,25 @@ import ru.lukyanov.model.PhoneNumberDTO;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 public class CountrySearchFrame extends JFrame {
 
     private final RestClientService restClientService = new RestClientService();
+    private static final Logger logger = LoggerFactory.getLogger(CountrySearchFrame.class);
+    private final HashMap<String, CountryDTO> countryHashMap = new HashMap<>(); //map с ключом названием страны и значением обьектом country
 
-    HashMap<String, CountryDTO> countryHashMap = new HashMap<>(); //map с ключом названием страны и значением обьектом country
-
-    public CountrySearchFrame(JFrame previousFrame ) {
+    public CountrySearchFrame(List<CountryDTO> countryDTOList, JFrame previousFrame) throws JsonProcessingException {
         setTitle("Результат поиска стран");
         setSize(300, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);//положение окна на экране
 
-        setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
+        setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 
-        findCountry().forEach(countryDTO -> {
+        countryDTOList.forEach(countryDTO -> {
             countryHashMap.put(countryDTO.getCountryName(), countryDTO);
         }); //получам лист country и кладем в hashmap
 
@@ -40,62 +39,51 @@ public class CountrySearchFrame extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(list);//оборачиваем лист в scrollPane
 
-        JButton backToStartButton = new BackButton(this,previousFrame,"назад",null);
+        JButton backToStartButton = new BackButton(this, previousFrame, "назад", null);
 
         add(scrollPane);
         add(backToStartButton);
         countrySelection(list);
 
-
         setVisible(true);
-    }
-
-    public List<CountryDTO> findCountry() {
-        List<CountryDTO> countryList = new ArrayList<>();
-        String response = restClientService.getResponseBody("http://localhost:8080/api/getCountryList");
-        try {
-            countryList = JsonClientService.jsonParseToArrayCountry(response);
-            return countryList;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 
     public void countrySelection(JList<String> list) {
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //тип выбора
-        list.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting() || null==list.getSelectedValue()) {
-                    return; // Игнорирует начало выбора
-                }
-
-                String selectedValue = String.valueOf(list.getSelectedValue());
-
-                openNumberFrame(countryHashMap.get(selectedValue).getCountry());
-                // Действие при выделении элемента
-                list.clearSelection();
-
+        list.addListSelectionListener(e -> {
+            if (e.getValueIsAdjusting() || null == list.getSelectedValue()) {
+                return; // Игнорирует начало выбора
             }
+            // Действие при выделении элемента
+            String selectedValue = String.valueOf(list.getSelectedValue());
+            openNumberFrame(countryHashMap.get(selectedValue).getCountry());
+
+            list.clearSelection();
         });
     }
-    public List<PhoneNumberDTO> findNumber(Long countryIndex) {
-        List<PhoneNumberDTO> phoneNumberList = new ArrayList<>();
-        String response = restClientService.getResponseBody("http://localhost:8080/api/getNumberList?countryIndex="+countryIndex);
-        try {
-            phoneNumberList = JsonClientService.jsonParseToArrayNumber(response);
-            return phoneNumberList;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+
+    public List<PhoneNumberDTO> findNumber(Long countryIndex) throws JsonProcessingException, IOException {
+        String response = restClientService.getResponseBody(
+                "http://localhost:8080/api/getNumberList?countryIndex=" + countryIndex);
+        return JsonClientService.jsonParseToArrayNumber(response);
     }
 
     public void openNumberFrame(Long countryIndex) {
-        new NumberSearchFrame(findNumber(countryIndex), this);
-        this.setVisible(false);
+        try {
+            new NumberSearchFrame(findNumber(countryIndex), this);
+            this.setVisible(false);
 
+        } catch (JsonProcessingException e) {
+            JOptionPane.showMessageDialog(this, "Произошла ошибка!",
+                    "Ошибка", JOptionPane.ERROR_MESSAGE);
+
+            logger.error("ошибка парсера {}", e.getMessage());
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Произошла ошибка сохранения!",
+                    "Ошибка", JOptionPane.ERROR_MESSAGE);
+
+            logger.error("Ошибка отправки Get-запроса {}", e.getMessage());
+        }
     }
-
-
 }

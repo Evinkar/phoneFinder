@@ -1,6 +1,7 @@
 package ru.front.frame;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.front.component.BackButton;
@@ -8,15 +9,16 @@ import ru.front.frame.message.PhoneNumberMessages;
 import ru.front.service.JsonClientService;
 import ru.front.service.RestClientService;
 import ru.lukyanov.model.PhoneNumberDTO;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
 public class NumberCardFrame extends JFrame {
-    private RestClientService restClientService = new RestClientService();
-    private PhoneNumberDTO phoneNumber;
+    private final RestClientService restClientService = new RestClientService();
     private static final Logger logger = LoggerFactory.getLogger(NumberCardFrame.class);
 
     private final List<String> displayedFields = Arrays.asList(
@@ -28,8 +30,6 @@ public class NumberCardFrame extends JFrame {
             "status");
 
     public NumberCardFrame(PhoneNumberDTO phoneNumber, JFrame previousFrame) {
-
-        this.phoneNumber = phoneNumber;
         setTitle("Number Card");
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,32 +48,44 @@ public class NumberCardFrame extends JFrame {
                         getFieldValue(phoneNumber, attributeName));
 
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                System.out.println("Некорректное создание поля");
+                logger.error("Некорректное создание поля");
             }
         }
 
+        JButton savePhoneButton = getSaveButton(phoneNumber);
+        add(savePhoneButton);
+
+        BackButton backToNumberButton = new BackButton(this, previousFrame, "назад", null);
+
+        contentPane.add(backToNumberButton);
+        pack();
+        setVisible(true);
+    }
+
+    private @NotNull JButton getSaveButton(PhoneNumberDTO phoneNumber) {
         JButton savePhoneButton = new JButton("Сохранить");
         savePhoneButton.addActionListener(e -> {
             try {
                 restClientService.postRequest("http://localhost:8080/api/saveNumber",
                         JsonClientService.objectToJson(phoneNumber));
-                logger.info("");
+
             } catch (JsonProcessingException ex) {
-                throw new RuntimeException(ex);
+                JOptionPane.showMessageDialog(this, "Произошла ошибка сохранения!",
+                        "Ошибка", JOptionPane.ERROR_MESSAGE);
+
+                logger.error("ошибка парсера при сохранении {}", ex.getMessage());
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Произошла ошибка сохранения!",
+                        "Ошибка", JOptionPane.ERROR_MESSAGE);
+
+                logger.error("Ошибка отправки Post-запроса {}", ex.getMessage());
             }
         });
-        add(savePhoneButton);
-
-        BackButton backToNumberButton = new BackButton(this,previousFrame,"назад",null);
-
-        contentPane.add(backToNumberButton);
-        pack();
-
-        setVisible(true);
+        return savePhoneButton;
     }
 
-
-    public void addLabelAndTextToContentPane(Container container,//возможно поменять на panel
+    public void addLabelAndTextToContentPane(Container container,
                                              String attributeName,
                                              String attributeValue) {
 
@@ -91,10 +103,10 @@ public class NumberCardFrame extends JFrame {
 
     public static String getFieldValue(Object obj, String fieldName)
             throws NoSuchFieldException, IllegalAccessException {
+
         Field field = obj.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);//игнорирует приватность полей
+
         return field.get(obj).toString();
     }
-
-
 }

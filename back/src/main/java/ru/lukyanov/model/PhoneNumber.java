@@ -6,9 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-
-@Table (name = "numbers")
-
+@Table(name = "numbers")
 public class PhoneNumber {
     @Id
     @JsonProperty("number")
@@ -26,9 +24,10 @@ public class PhoneNumber {
     @JsonProperty("maxdate")
     private String maxDate;
     @JsonProperty("status")
-    private  String status;
+    private String status;
 
-    public PhoneNumber(Long number, String countryName, String updatedAt, String dataHumans, String fullNumber, String countryText, String maxDate, String status) {
+    public PhoneNumber(Long number, String countryName, String updatedAt, String dataHumans,
+                       String fullNumber, String countryText, String maxDate, String status) {
         this.number = number;
         this.countryIndex = countryName;
         this.updatedAt = updatedAt;
@@ -41,10 +40,11 @@ public class PhoneNumber {
 
     public PhoneNumber() {
     }
+
     @Override
-    public String toString(){
+    public String toString() {
         return ("number: " + number + " country name: " + countryText
-                + " Updated at: " + updatedAt + " Full number: " + fullNumber );
+                + " Updated at: " + updatedAt + " Full number: " + fullNumber);
     }
 
     public Long getNumber() {
@@ -123,7 +123,8 @@ public class PhoneNumber {
         phoneNumberDTO.setUpdatedAt(this.getUpdatedAt());
         return phoneNumberDTO;
     }
-    public static PhoneNumber fromDTO(PhoneNumberDTO phoneNumberDTO){
+
+    public static PhoneNumber fromDTO(PhoneNumberDTO phoneNumberDTO) {
         PhoneNumber phoneNumber = new PhoneNumber();
         phoneNumber.setNumber(phoneNumberDTO.getNumber());
         phoneNumber.setFullNumber(phoneNumberDTO.getFullNumber());

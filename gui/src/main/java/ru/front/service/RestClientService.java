@@ -10,7 +10,7 @@ public class RestClientService {
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static final Logger logger = LoggerFactory.getLogger(RestClientService.class);
 
-    public String getResponseBody(String url) {
+    public String getResponseBody(String url) throws IOException {
         logger.info("Получение responseBody из {}", url);
         Request request = new Request.Builder()
                 .url(url)
@@ -18,19 +18,13 @@ public class RestClientService {
 
         OkHttpClient client = new OkHttpClient();
 
-        try {
-            Response response = client.newCall(request).execute();
-            String responseBody = response.body().string();// получаем из response массив JSON объектов
+        Response response = client.newCall(request).execute();
+        String responseBody = response.body().string();// получаем из response массив JSON объектов
 
-            return responseBody;
-
-        } catch (IOException e) {
-            logger.error("Ошибка runtime",e);
-            throw new RuntimeException(e);
-        }
-
+        return responseBody;
     }
-    public String postRequest(String url,String body) {
+
+    public String postRequest(String url, String body) throws IOException {
         RequestBody requestBody = RequestBody.create(body, JSON);
         Request request = new Request.Builder()
                 .url(url)
@@ -38,15 +32,10 @@ public class RestClientService {
                 .build();
 
         OkHttpClient client = new OkHttpClient();
+        Response response = client.newCall(request).execute();
+        String responseBody = response.body().string();// получаем из response массив JSON объектов
+        logger.info("Отправка тела запроса : {}", responseBody);
 
-        try {
-            Response response = client.newCall(request).execute();
-            String responseBody = response.body().string();// получаем из response массив JSON объектов
-            logger.info("Отправка тела запроса : {}", responseBody);
-            return responseBody;
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return responseBody;
     }
 }

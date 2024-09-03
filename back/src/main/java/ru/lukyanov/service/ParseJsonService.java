@@ -20,14 +20,10 @@ public class ParseJsonService {
     public ArrayList<Country> jsonParseToArrayCountry(String response) throws JsonProcessingException {
 
         return objectMapper.readValue(response, ResponseCountry.class).getCountries();
-
-
     }
 
     public ArrayList<PhoneNumber> jsonParseToArrayNumber(String response) throws JsonProcessingException {
 
         return objectMapper.readValue(response, ResponseNumber.class).getNumbers();
     }
-
-
 }

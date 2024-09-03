@@ -9,7 +9,7 @@ public class PhoneNumberDTO {
     private String fullNumber;
     private String countryText;
     private String maxDate;
-    private  String status;
+    private String status;
 
     public PhoneNumberDTO(Long number, String countryIndex, String updatedAt, String dataHumans, String fullNumber, String countryText, String maxDate, String status) {
         this.number = number;

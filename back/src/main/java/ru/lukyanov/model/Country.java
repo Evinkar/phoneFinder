@@ -6,16 +6,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-
 @Table(name = "countries")
-
 public class Country {
     @Id
     @JsonProperty("country")
     private Long country;
     @JsonProperty("country_text")
     private String countryName;
-
 
     public Country(Long country, String countryName) {
         this.country = country;
@@ -25,6 +22,7 @@ public class Country {
     public Country() {
     }
 
+    //soliD инверсия зависимости, что бы реализация зависела от абстракции
     public CountryDTO toDTO() {
         return new CountryDTO(this.getCountry(), this.getCountryName());
     }
@@ -32,7 +30,7 @@ public class Country {
     public static Country fromDTO(CountryDTO countryDTO) {
         return new Country(countryDTO.getCountry(), countryDTO.getCountryName());
     }
-    //soliD инверсия зависимости, что бы реализация зависела от абстракции
+
     @Override
     public String toString() {
         return ("number: " + country + " country name: " + countryName);

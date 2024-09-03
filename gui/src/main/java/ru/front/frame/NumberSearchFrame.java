@@ -13,14 +13,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class NumberSearchFrame extends JFrame {
+
     private static final Logger logger = LoggerFactory.getLogger(NumberSearchFrame.class);
-    private RestClientService restClientService = new RestClientService();
+    private final RestClientService restClientService = new RestClientService();
     private final HashMap<Long, PhoneNumberDTO> numberHashMap = new HashMap<>();
 
-    private Long countryIndex;
-
     public NumberSearchFrame(List<PhoneNumberDTO> numberList, JFrame previousFrame) {
-        this.countryIndex = countryIndex;
         setTitle("Список номеров");
         setSize(200, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -30,14 +28,15 @@ public class NumberSearchFrame extends JFrame {
         panel.setLayout(layout);
         layout.setAutoCreateGaps(true);
 
-
         numberList.forEach(phoneNumberDTO -> {
             numberHashMap.put(phoneNumberDTO.getNumber(), phoneNumberDTO);
         }); //получам лист number и кладем в hashmap с ключом number
 
         JList<Long> list = new JList<>(numberHashMap.keySet().stream().toList().toArray(new Long[0]));//добавляем в лист массив обьекта country c методом to string
         JScrollPane scrollPane = new JScrollPane(list);//оборачиваем лист в scrollPane
+
         BackButton backToCountryButton = new BackButton(this, previousFrame, "назад", null);
+
         JLabel label = new JLabel("Выберите номер телефона");
 
         layout.setVerticalGroup(
@@ -54,37 +53,28 @@ public class NumberSearchFrame extends JFrame {
 
         );
 
-
         numberSelection(list);
         add(panel);
         setLocationRelativeTo(null);
         setVisible(true);
-
     }
-
 
     public void numberSelection(JList<Long> list) {
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //тип выбора
-        list.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting() || null == list.getSelectedValue()) {
-                    return; // Игнорирует начало выбора
-                }
-                String selectedValue = String.valueOf(list.getSelectedValue());
-
-                openNumberCardFrame(numberHashMap.get(Long.parseLong(selectedValue)));
-                // Действие при выделении элемента
-                list.clearSelection();
+        list.addListSelectionListener(e -> {
+            if (e.getValueIsAdjusting() || null == list.getSelectedValue()) {
+                return; // Игнорирует начало выбора
             }
+            // Действие при выделении элемента
+            String selectedValue = String.valueOf(list.getSelectedValue());
+            openNumberCardFrame(numberHashMap.get(Long.parseLong(selectedValue)));
+
+            list.clearSelection();
         });
-
-
     }
 
     public void openNumberCardFrame(PhoneNumberDTO phoneNumberDTO) {
         new NumberCardFrame(phoneNumberDTO, this);
         this.setVisible(false);
     }
-
 }

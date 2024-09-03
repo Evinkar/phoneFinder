@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public class ResponseNumber {
 
     private String response;
-
     private ArrayList<PhoneNumber> numbers;
 
     public String getResponse() {

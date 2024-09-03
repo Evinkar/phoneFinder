@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface NumberRepository extends JpaRepository<PhoneNumber, Long> {
-    public List<PhoneNumber> findAll();
+    List<PhoneNumber> findAll();
 }
