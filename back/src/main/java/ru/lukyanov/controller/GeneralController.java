@@ -36,10 +36,13 @@ public class GeneralController {
                     .getResponseBody("https://onlinesim.ru/api/getFreeCountryList"));
             ArrayList<Country> countries;
             countries = parseJsonService.jsonParseToArrayCountry(responseBody);
+
             return countries.stream().map(country -> country.toDTO()).toList();
+
         } catch (JsonProcessingException e) {
             logger.error("Ошибка при парсинге Country{}", e.getMessage());
             throw new RuntimeException(e);
+
         } catch (IOException e) {
             logger.error("Ошибка GET-запроса getCountryResponse {}", e.getMessage());
             throw new RuntimeException(e);
@@ -56,9 +59,11 @@ public class GeneralController {
             numbers = parseJsonService.jsonParseToArrayNumber(responseBody);
 
             return numbers.stream().map(PhoneNumber::toDTO).toList();
+
         } catch (JsonProcessingException e) {
             logger.error("Ошибка при парсинге PhoneNumber {}", e.getMessage());
             throw new RuntimeException(e);
+
         } catch (IOException e) {
             logger.error("Ошибка GET-запроса getPhoneNumberList {}", e.getMessage());
             throw new RuntimeException(e);
@@ -69,6 +74,7 @@ public class GeneralController {
     public PhoneNumberDTO saveNumber(@RequestBody PhoneNumberDTO phoneNumberDTO) {
         PhoneNumberDTO savedNumber = numberRepository.save(PhoneNumber.fromDTO(phoneNumberDTO)).toDTO();
         logger.info("Обьект {} сохранен в БД", savedNumber.getFullNumber());
+
         return savedNumber;
     }
 
@@ -76,6 +82,7 @@ public class GeneralController {
     public List<PhoneNumberDTO> loadAllSavedNumbers() {
         List<PhoneNumberDTO> phoneNumberDTOList = numberRepository.findAll().stream().map(PhoneNumber::toDTO).toList();
         logger.info("Получен из БД лист из {} номеров", phoneNumberDTOList.size());
+
         return phoneNumberDTOList;
     }
 }
