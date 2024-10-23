@@ -10,8 +10,12 @@ public class BackButton extends JButton {
         init(text, icon);
         setModel(new DefaultButtonModel());
         addActionListener(e -> {
-            previousFrame.setVisible(true);
-            currentFrame.dispose();
+            SwingUtilities.invokeLater(()->{
+                previousFrame.setVisible(true);
+                currentFrame.dispose();
+                System.out.println(Thread.currentThread().getName());
+            });
+
         });
     }
 }

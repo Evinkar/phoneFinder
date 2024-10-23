@@ -9,14 +9,12 @@ import ru.lukyanov.model.CountryDTO;
 import ru.lukyanov.model.PhoneNumberDTO;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StartFrame extends JFrame {
-    private static final RestClientService restClientService = new RestClientService();
+    //private static final RestClientService restClientService = new RestClientService();
     private static final Logger logger = LoggerFactory.getLogger(StartFrame.class);
 
     public StartFrame() {
@@ -31,7 +29,11 @@ public class StartFrame extends JFrame {
 
         JButton countrySearchButton = new JButton("Поиск по странам");
         countrySearchButton.addActionListener(e -> {
-            openCountrySearchFrame(); // Метод для открытия второго окна
+            SwingUtilities.invokeLater (() -> {
+                openCountrySearchFrame();// Метод для открытия второго окна
+                System.out.println(Thread.currentThread().getName());
+            });
+
         });
 
         JButton phoneBook = new JButton("Телефонная книга");
@@ -58,7 +60,7 @@ public class StartFrame extends JFrame {
 
     public List<CountryDTO> findCountry() throws JsonProcessingException, IOException {
         List<CountryDTO> countryList = new ArrayList<>();
-        String response = restClientService.getResponseBody("http://localhost:8080/api/getCountryList");
+        String response = RestClientService.getResponseBody("http://localhost:8080/api/getCountryList");
         countryList = JsonClientService.jsonParseToArrayCountry(response);
 
         return countryList;
@@ -86,7 +88,7 @@ public class StartFrame extends JFrame {
     private void openPhoneBookFrame() {
         List<PhoneNumberDTO> phoneNumberDTOList;
         try {
-            phoneNumberDTOList = JsonClientService.jsonParseToArrayNumber(restClientService
+            phoneNumberDTOList = JsonClientService.jsonParseToArrayNumber(RestClientService
                     .getResponseBody("http://localhost:8080/api/loadNumberList"));
 
             new NumberSearchFrame(phoneNumberDTOList, this);

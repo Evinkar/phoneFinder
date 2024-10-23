@@ -15,7 +15,7 @@ import java.util.List;
 public class NumberSearchFrame extends JFrame {
 
     private static final Logger logger = LoggerFactory.getLogger(NumberSearchFrame.class);
-    private final RestClientService restClientService = new RestClientService();
+    //private final RestClientService restClientService = new RestClientService();
     private final HashMap<Long, PhoneNumberDTO> numberHashMap = new HashMap<>();
 
     public NumberSearchFrame(List<PhoneNumberDTO> numberList, JFrame previousFrame) {
@@ -53,10 +53,14 @@ public class NumberSearchFrame extends JFrame {
 
         );
 
+
         numberSelection(list);
+
         add(panel);
         setLocationRelativeTo(null);
         setVisible(true);
+
+
     }
 
     public void numberSelection(JList<Long> list) {
@@ -67,7 +71,11 @@ public class NumberSearchFrame extends JFrame {
             }
             // Действие при выделении элемента
             String selectedValue = String.valueOf(list.getSelectedValue());
-            openNumberCardFrame(numberHashMap.get(Long.parseLong(selectedValue)));
+            SwingUtilities.invokeLater(() -> {
+                openNumberCardFrame(numberHashMap.get(Long.parseLong(selectedValue)));
+                System.out.println(Thread.currentThread().getName());
+            });
+
 
             list.clearSelection();
         });

@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NumberCardFrame extends JFrame {
-    private final RestClientService restClientService = new RestClientService();
+    //private final RestClientService restClientService = new RestClientService();
     private static final Logger logger = LoggerFactory.getLogger(NumberCardFrame.class);
 
     private final List<String> displayedFields = Arrays.asList(
@@ -66,7 +66,7 @@ public class NumberCardFrame extends JFrame {
         JButton savePhoneButton = new JButton("Сохранить");
         savePhoneButton.addActionListener(e -> {
             try {
-                restClientService.postRequest("http://localhost:8080/api/saveNumber",
+                RestClientService.postRequest("http://localhost:8080/api/saveNumber",
                         JsonClientService.objectToJson(phoneNumber));
 
             } catch (JsonProcessingException ex) {

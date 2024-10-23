@@ -1,24 +1,18 @@
 package ru.front.frame;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 import ru.front.component.BackButton;
-import ru.front.service.JsonClientService;
-import ru.front.service.RestClientService;
-import ru.lukyanov.model.CountryDTO;
-import ru.lukyanov.model.PhoneNumberDTO;
+import ru.front.service.*;
+import ru.lukyanov.model.*;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class CountrySearchFrame extends JFrame {
 
-    private final RestClientService restClientService = new RestClientService();
+    //private final RestClientService restClientService = new RestClientService();
     private static final Logger logger = LoggerFactory.getLogger(CountrySearchFrame.class);
     private final HashMap<String, CountryDTO> countryHashMap = new HashMap<>(); //map с ключом названием страны и значением обьектом country
 
@@ -44,7 +38,6 @@ public class CountrySearchFrame extends JFrame {
         add(scrollPane);
         add(backToStartButton);
         countrySelection(list);
-
         setVisible(true);
     }
 
@@ -56,19 +49,21 @@ public class CountrySearchFrame extends JFrame {
             }
             // Действие при выделении элемента
             String selectedValue = String.valueOf(list.getSelectedValue());
-            openNumberFrame(countryHashMap.get(selectedValue).getCountry());
 
+            openNumberFrame(countryHashMap.get(selectedValue).getCountry());
+            System.out.println(Thread.currentThread().getName());
             list.clearSelection();
         });
     }
 
     public List<PhoneNumberDTO> findNumber(Long countryIndex) throws JsonProcessingException, IOException {
-        String response = restClientService.getResponseBody(
+        String response = RestClientService.getResponseBody(
                 "http://localhost:8080/api/getNumberList?countryIndex=" + countryIndex);
         return JsonClientService.jsonParseToArrayNumber(response);
     }
 
     public void openNumberFrame(Long countryIndex) {
+
         try {
             new NumberSearchFrame(findNumber(countryIndex), this);
             this.setVisible(false);

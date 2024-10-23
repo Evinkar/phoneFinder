@@ -10,7 +10,7 @@ public class RestClientService {
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static final Logger logger = LoggerFactory.getLogger(RestClientService.class);
 
-    public String getResponseBody(String url) throws IOException {
+    public static String getResponseBody(String url) throws IOException {
         logger.info("Получение responseBody из {}", url);
         Request request = new Request.Builder()
                 .url(url)
@@ -24,7 +24,7 @@ public class RestClientService {
         return responseBody;
     }
 
-    public String postRequest(String url, String body) throws IOException {
+    public static String postRequest(String url, String body) throws IOException {
         RequestBody requestBody = RequestBody.create(body, JSON);
         Request request = new Request.Builder()
                 .url(url)
