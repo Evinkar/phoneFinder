@@ -22,6 +22,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     implementation project(':api')
+    implementation project(':back')
 }
 
 test {

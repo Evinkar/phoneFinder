@@ -1,6 +1,6 @@
 package ru.lukyanov.model;
 
-public class PhoneNumberDTO {
+public class PhoneNumber {
 
     private Long number;
     private String countryIndex;
@@ -11,7 +11,7 @@ public class PhoneNumberDTO {
     private String maxDate;
     private String status;
 
-    public PhoneNumberDTO(Long number, String countryIndex, String updatedAt, String dataHumans, String fullNumber, String countryText, String maxDate, String status) {
+    public PhoneNumber(Long number, String countryIndex, String updatedAt, String dataHumans, String fullNumber, String countryText, String maxDate, String status) {
         this.number = number;
         this.countryIndex = countryIndex;
         this.updatedAt = updatedAt;
@@ -22,7 +22,7 @@ public class PhoneNumberDTO {
         this.status = status;
     }
 
-    public PhoneNumberDTO() {
+    public PhoneNumber() {
     }
 
     public Long getNumber() {

@@ -1,16 +1,16 @@
 package ru.lukyanov.model;
 
-public class CountryDTO {
+public class Country {
 
     private Long country;
     private String countryName;
 
-    public CountryDTO(Long country, String countryName) {
+    public Country(Long country, String countryName) {
         this.country = country;
         this.countryName = countryName;
     }
 
-    public CountryDTO() {
+    public Country() {
     }
 
     public Long getCountry() {

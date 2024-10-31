@@ -19,9 +19,15 @@ public class RestClientService {
         OkHttpClient client = new OkHttpClient();
 
         Response response = client.newCall(request).execute();
-        String responseBody = response.body().string();// получаем из response массив JSON объектов
 
-        return responseBody;
+
+        if(response.body() != null){
+            // получаем из response массив JSON объектов
+            return response.body().string();
+        } else {
+            logger.error("Нет тела запроса");
+            return "";
+        }
     }
 
     public static String postRequest(String url, String body) throws IOException {

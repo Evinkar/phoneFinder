@@ -111,20 +111,20 @@ public class PhoneNumber {
         this.status = status;
     }
 
-    public PhoneNumberDTO toDTO() {
-        PhoneNumberDTO phoneNumberDTO = new PhoneNumberDTO();
-        phoneNumberDTO.setNumber(this.getNumber());
-        phoneNumberDTO.setFullNumber(this.getFullNumber());
-        phoneNumberDTO.setCountryIndex(this.getCountryIndex());
-        phoneNumberDTO.setCountryText(this.getCountryText());
-        phoneNumberDTO.setStatus(this.getStatus());
-        phoneNumberDTO.setDataHumans(this.getDataHumans());
-        phoneNumberDTO.setMaxDate(this.getMaxDate());
-        phoneNumberDTO.setUpdatedAt(this.getUpdatedAt());
-        return phoneNumberDTO;
+    public PhoneNumber toDTO() {
+        PhoneNumber phoneNumber = new PhoneNumber();
+        phoneNumber.setNumber(this.getNumber());
+        phoneNumber.setFullNumber(this.getFullNumber());
+        phoneNumber.setCountryIndex(this.getCountryIndex());
+        phoneNumber.setCountryText(this.getCountryText());
+        phoneNumber.setStatus(this.getStatus());
+        phoneNumber.setDataHumans(this.getDataHumans());
+        phoneNumber.setMaxDate(this.getMaxDate());
+        phoneNumber.setUpdatedAt(this.getUpdatedAt());
+        return phoneNumber;
     }
 
-    public static PhoneNumber fromDTO(PhoneNumberDTO phoneNumberDTO) {
+    public static PhoneNumber fromDTO(PhoneNumber phoneNumberDTO) {
         PhoneNumber phoneNumber = new PhoneNumber();
         phoneNumber.setNumber(phoneNumberDTO.getNumber());
         phoneNumber.setFullNumber(phoneNumberDTO.getFullNumber());

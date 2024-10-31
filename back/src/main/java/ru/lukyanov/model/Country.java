@@ -23,11 +23,11 @@ public class Country {
     }
 
     //soliD инверсия зависимости, что бы реализация зависела от абстракции
-    public CountryDTO toDTO() {
-        return new CountryDTO(this.getCountry(), this.getCountryName());
+    public Country toDTO() {
+        return new Country(this.getCountry(), this.getCountryName());
     }
 
-    public static Country fromDTO(CountryDTO countryDTO) {
+    public static Country fromDTO(Country countryDTO) {
         return new Country(countryDTO.getCountry(), countryDTO.getCountryName());
     }
 
